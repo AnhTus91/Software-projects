@@ -1,0 +1,350 @@
+﻿@* @model IEnumerable<QLThuocDAPM.Data.SanPham>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+   
+</head>
+<body>
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TenSp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ThanhPhan)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.GiaTien)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DonVi)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HansuDung)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ChitietSp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SoLuong)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SoLuongMua)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HinhAnh1)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HinhAnh2)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HinhAnh3)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HinhAnh4)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaBenhNavigation)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaDmNavigation)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaGiamGiaNavigation)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaNhaCungCapNavigation)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TenSp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ThanhPhan)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GiaTien)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DonVi)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HansuDung)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ChitietSp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SoLuong)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SoLuongMua)
+                    </td>
+                    <td>
+                        <img src="@Url.Content(item.HinhAnh1)" alt="Hình 1" class="image-thumbnail" />
+                    </td>
+                    <td>
+                        <img src="@Url.Content(item.HinhAnh2)" alt="Hình 2" class="image-thumbnail" />
+                    </td>
+                    <td>
+                        <img src="@Url.Content(item.HinhAnh3)" alt="Hình 3" class="image-thumbnail" />
+                    </td>
+                    <td>
+                        <img src="@Url.Content(item.HinhAnh4)" alt="Hình 4" class="image-thumbnail" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaBenhNavigation.MaBenh)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaDmNavigation.MaDm)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaGiamGiaNavigation.MaGiamGia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaNhaCungCapNavigation.MaNhaCungCap)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MaSp">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.MaSp">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.MaSp">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
+ *@
+
+ @model IEnumerable<QLThuocDAPM.Data.SanPham>
+
+@{
+    Layout = "~/Areas/Admin/Views/shared/_Layout.cshtml";
+}
+
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Sản Phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-link {
+            padding: 8px 16px;
+            margin: 0 5px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .page-link:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+        .page-info {
+            margin: 0 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .page-link:disabled, .page-link.disabled {
+            color: #aaa;
+            border-color: #ddd;
+            pointer-events: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+/*             margin: 20px;
+ */            background-color: #f4f4f4;
+ 
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            width:1500px;
+        }
+
+            .table th, .table td {
+                padding: 12px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+
+            .table th {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .table tr:hover {
+                background-color: #f1f1f1;
+            }
+
+        .image-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .btn {
+/*             padding: 6px 12px;
+ */            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+            .btn:hover {
+/*                 background-color: #0056b3;
+ */            }
+
+        .action-buttons {
+
+        }
+    </style>
+</head>
+<body>
+    <h1>Danh Sách Sản Phẩm</h1>
+    <p>
+        <a class="btn" asp-action="Create">Tạo Mới</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayName("Mã sản phẩm")</th>
+                <th>@Html.DisplayName("Tên sản phẩm")</th>
+                <th>@Html.DisplayName("Thành phần")</th>
+                <th>@Html.DisplayName("Giá tiền")</th>
+                <th>@Html.DisplayName("Đơn vị")</th>
+                <th>@Html.DisplayName("Hạn sử dụng")</th>
+                <th>@Html.DisplayName("Chi tiết sản phẩm")</th>
+                <th>@Html.DisplayName("Số lượng")</th>
+                <th>@Html.DisplayName("Số lượng mua")</th>
+                <th>@Html.DisplayName("Hình ảnh 1")</th>
+                <th>@Html.DisplayName("Hình ảnh 2")</th>
+                <th>@Html.DisplayName("Hình ảnh 3")</th>
+                @* <th>@Html.DisplayName("Hình ảnh 4")</th> *@
+                <th>@Html.DisplayName("Loại bệnh")</th>
+                <th>@Html.DisplayName("Danh mục")</th>
+                <th>@Html.DisplayName("Mã giảm giá")</th>
+                <th>@Html.DisplayName("Nhà cung cấp")</th>
+                <th></th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.MaSp)</td>
+
+                    <td>@Html.DisplayFor(modelItem => item.TenSp)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ThanhPhan)</td>
+                    <td>@Html.DisplayFor(modelItem => item.GiaTien)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DonVi)</td>
+                    <td>@Html.DisplayFor(modelItem => item.HansuDung)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ChitietSp)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SoLuong)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SoLuongMua)</td>
+                    <td><img src="@Url.Content(item.HinhAnh1)" alt="Hình 1" class="image-thumbnail" /></td>
+                    <td><img src="@Url.Content(item.HinhAnh2)" alt="Hình 2" class="image-thumbnail" /></td>
+                    <td><img src="@Url.Content(item.HinhAnh3)" alt="Hình 3" class="image-thumbnail" /></td>
+@*                     <td><img src="@Url.Content(item.HinhAnh4)" alt="Hình 4" class="image-thumbnail" /></td>
+ *@                    
+
+                    <td>
+                        <a asp-action="Index" asp-controller="Benhs" asp-route-maBenh="@item.MaBenhNavigation.MaBenh">
+                            @Html.DisplayFor(modelItem => item.MaBenhNavigation.MaBenh)
+                        </a>
+                    </td>
+
+                   
+                    <td>
+                        <a asp-action="Index" asp-controller="DanhMucs" asp-route-maDanhMuc="@item.MaDmNavigation.MaDm">
+                            @Html.DisplayFor(modelItem => item.MaDmNavigation.MaDm)
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-action="Index" asp-controller="GiamGiums" asp-route-maGiamGia="@item.MaGiamGiaNavigation.MaGiamGia">
+                            @Html.DisplayFor(modelItem => item.MaGiamGiaNavigation.MaGiamGia)
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a asp-action="Index" asp-controller="NhaCungCaps" asp-route-maNhaCungCap="@item.MaNhaCungCapNavigation.MaNhaCungCap">
+                            @Html.DisplayFor(modelItem => item.MaNhaCungCapNavigation.MaNhaCungCap)
+                        </a>
+                    </td>
+
+                    <td>
+                        <div style="color:white" class="action-buttons">
+                            <a  class="btn" asp-action="Edit" asp-route-id="@item.MaSp">Sửa</a>
+                            <a  class="btn" asp-action="Details" asp-route-id="@item.MaSp">Chi Tiết</a>
+                            <a  class="btn" asp-action="Delete" asp-route-id="@item.MaSp">Xóa</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage - 1)" class="page-link">Previous</a>
+        }
+
+        <span class="page-info">Page @ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <a asp-action="Index" asp-route-pageNumber="@(ViewBag.CurrentPage + 1)" class="page-link">Next</a>
+        }
+    </div>
+</body>
+</html>

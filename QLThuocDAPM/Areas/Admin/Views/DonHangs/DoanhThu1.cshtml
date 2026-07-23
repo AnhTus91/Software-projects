@@ -1,0 +1,29 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Thống Kê Doanh Thu";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Năm</th>
+            <th>Doanh Thu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="@Url.Action("DoanhThuTheoThang", "DonHangs", new { nam = item.Nam })">
+                        @item.Nam
+                    </a>
+                </td>
+                <td>@string.Format("{0:n0}", item.DoanhThu) VNĐ</td>
+            </tr>
+        }
+    </tbody>
+</table>

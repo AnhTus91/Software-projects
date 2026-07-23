@@ -1,0 +1,37 @@
+﻿@model IEnumerable<QLThuocDAPM.Data.SanPham>
+<head>
+
+</head>
+
+@* <input id="minPrice" name="minPrice" type="number" step="0.01" min="0" placeholder="Min Price"
+       style="width: 40px; border: 1px solid #ddd; border-radius: 5px; padding: 8px; outline: none; font-size: 14px; margin-left: 10px; transition: all 0.3s ease;"
+       onfocus="this.style.borderColor='#3498db';" onblur="this.style.borderColor='#ddd';" />
+
+<!-- Input for maximum price -->
+<input id="maxPrice" name="maxPrice" type="number" step="0.01" min="0" placeholder="Max Price"
+       style="width: 90px; border: 1px solid #ddd; border-radius: 5px; padding: 8px; outline: none; font-size: 14px; margin-left: 10px; transition: all 0.3s ease;"
+       onfocus="this.style.borderColor='#3498db';" onblur="this.style.borderColor='#ddd';" /> *@
+
+@* <!-- Search Button -->
+<button type="submit" class="icon-search bx bx-search"
+        style="background-color: #3498db; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 5px; display: flex; align-items: center; justify-content: center; height: 51px; width: 60px; margin-left: 10px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+</button> *@
+
+    <p style="justify-content:center;margin:auto;text-align:center;font-weight:500;font-size:50px">
+        Danh sách tìm kiếm
+    </p>
+    <div style="justify-content:center;margin:auto;display
+:flex;width:1100px">
+    @foreach (var item in Model)
+    {
+        <div class="col-3 mt-2 card-product">
+            <a asp-controller="SanPham" asp-action="ChiTietSanPham" asp-route-id="@item.MaSp">
+                <img class="img-product" src="@Url.Content(item.HinhAnh1)">
+                <div class="name-product">@item.TenSp</div>
+
+                <div class="price-product">Giá: @item.GiaTien VNĐ</div>
+
+            </a>
+        </div>
+    }
+    </div>

@@ -1,0 +1,446 @@
+﻿ @model List<CartItem>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán</title>
+    <style>
+
+        .hidden {
+            display: none;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-section {
+            width: 60%;
+        }
+
+        .right-section {
+            width: 37%;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1250DC;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            font-family: Arial;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #1e90ff;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a asp-action="Index" class="mt-3 d-block text-primary text-start fw-bold">← Quay lại giỏ hàng</a>
+        <h2>Thanh Toán</h2>
+        <div class="content-wrapper">
+            <div class="left-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hình ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><img width="48" height="48" class="anhsanpham" src="@Url.Content(item.Hinh)" alt="Product Image"></td>
+                                <td>@item.TenHH</td>
+                                <td>x @item.SoLuong</td>
+                                <td>@item.DonGia vnđ</td>
+                                <td>@item.TongTien vnđ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h4>Thông tin người đặt</h4>
+
+                <!-- Dropdown chọn phương thức thanh toán -->
+                <div class="form-group">
+                    <label for="payment-method">Chọn phương thức thanh toán:</label>
+                    <select id="payment-method" class="form-control">
+                        <option value="">-- Chọn phương thức --</option>
+                        <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                        <option value="paypal">Thanh toán Paypal</option>
+                        <option value="vnpay">Thanh toán VNPAY</option>
+                    </select>
+                </div>
+
+                <!-- Form thông tin người đặt (Dùng chung cho COD và Paypal) -->
+                <div id="form-thong-tin" class="hidden">
+                    <form asp-action="LuuDonHang" asp-controller="GioHang" method="post">
+                        <div class="form-group">
+                            <label for="tennguoinhan">Tên:</label>
+                            <input type="text" name="tennguoinhan" class="form-control" value="@ViewData["UserName"]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sdtnguoinhan">Số điện thoại:</label>
+                            <input type="text" name="sdtnguoinhan" class="form-control" value="@ViewData["UserPhone"]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="province">Tỉnh/Thành phố:</label>
+                            <select id="province" class="form-control" required onchange="loadDistricts()">
+                                <option value="">Chọn tỉnh/thành phố</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="district">Quận/Huyện:</label>
+                            <select id="district" class="form-control" required onchange="loadWards()">
+                                <option value="">Chọn quận/huyện</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ward">Xã/Phường:</label>
+                            <select id="ward" class="form-control" required>
+                                <option value="">Chọn xã/phường</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="address_detail">Địa chỉ cụ thể:</label>
+                            <input id="address_detail" type="text" class="form-control" placeholder="Nhập địa chỉ cụ thể..." required>
+                        </div>
+                        <input type="hidden" name="address" id="fullAddress">
+
+                        <!-- Nút thanh toán sẽ thay đổi dựa theo lựa chọn -->
+                        <button id="cod-button" type="submit" class="btn btn-primary hidden">Thanh toán</button>
+                        <button id="paypal-button" asp-action="CreatePayment" asp-controller="GioHang" type="submit" class="btn btn-primary hidden">Thanh toán Paypal</button>
+                    </form>
+                </div>
+
+                <!-- Form thanh toán VNPAY -->
+                <div id="form-vnpay" class="hidden">
+                    <h4>Thông tin thanh toán VNPAY</h4>
+                    <form method="GET" asp-action="CreatePaymentUrlVnpay" asp-controller="Payment">
+                        <div class="form-group">
+                            <label for="tennguoinhan">Tên:</label>
+                            <input type="text" name="tennguoinhan" class="form-control" value="@ViewData["UserName"]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sdtnguoinhan">Số điện thoại:</label>
+                            <input type="text" name="sdtnguoinhan" class="form-control" value="@ViewData["UserPhone"]" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="province">Tỉnh/Thành phố:</label>
+                            <select id="province-vnpay" class="form-control" required onchange="loadDistrictsVnpay()">
+                                <option value="">Chọn tỉnh/thành phố</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="district">Quận/Huyện:</label>
+                            <select id="district-vnpay" class="form-control" required onchange="loadWardsVnpay()">
+                                <option value="">Chọn quận/huyện</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ward">Xã/Phường:</label>
+                            <select id="ward-vnpay" class="form-control" required>
+                                <option value="">Chọn xã/phường</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="address_detail">Địa chỉ cụ thể:</label>
+                            <input id="address_detail_vnpay" type="text" class="form-control" placeholder="Nhập địa chỉ cụ thể..." required>
+                        </div>
+                        <input type="hidden" name="address" id="fullAddress-vnpay">
+
+                        <!-- Các thông tin ẩn của VNPAY -->
+                        <input type="hidden" name="Name" value="abc">
+                        <input type="hidden" name="Amount" value="@ViewData["TotalAmount"]">
+                        <input type="hidden" name="OrderDescription" value="Thanh toán tại Thạch Dược Đường">
+                        <input type="hidden" name="OrderType" value="other">
+
+                        <button class="btn btn-success" type="submit">Pay with Vnpay</button>
+                    </form>
+                </div>
+
+
+            </div>
+            <div class="right-section">
+                <form asp-action="ApDungMaGiamGia" asp-controller="GioHang" method="post">
+                    <h4 class="text-center">Mã giảm giá</h4>
+                    <div class="form-group">
+                        <h4>@ViewData["QuaHan"]</h4>
+                        <input type="text" name="maKhuyenMai" class="form-control" placeholder="Nhập mã giảm giá" required>
+                    </div>
+                    <button type="submit" class="btn">Áp dụng</button>
+                </form>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                    <h5 style="color: DarkGray;">Giá trị đơn hàng:</h5>
+
+                    <h5>@ViewData["tongtien"] vnđ</h5>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h5 style="color: DarkGray;">Giảm giá:</h5>
+                    <h5 style="color: #FFE5B4;">@ViewData["giamgia"] vnđ</h5>
+                </div>
+
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h5>Thành tiền:</h5>
+                    <h4 style="color: #1e90ff;">@ViewData["TotalAmount"] vnđ</h4>
+
+                </div>
+
+
+                <div style="text-align: center;">
+                    <p>
+                        <div>
+                            Bằng việc tiến hành đặt mua hàng, bạn đồng ý với
+                        </div>
+                        <div>
+                            <u><strong>Điều khoản dịch vụ</strong></u> và <u><strong>Chính sách xử lý dữ liệu cá nhân</strong></u>
+                        </div>
+                        của Nhà thuốc FPT Long Châu.
+                    </p>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadProvinces();
+            document.getElementById("address_detail").addEventListener("input", updateFullAddress);
+        });
+
+        function updateFullAddress() {
+            let province = document.getElementById("province").options[document.getElementById("province").selectedIndex].text;
+            let district = document.getElementById("district").options[document.getElementById("district").selectedIndex].text;
+            let ward = document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text;
+            let detail = document.getElementById("address_detail").value;
+
+            document.getElementById("fullAddress").value = detail + ", " + ward + ", " + district + ", " + province;
+        }
+
+        function loadProvinces() {
+            fetch("https://provinces.open-api.vn/api/p/")
+                .then(response => response.json())
+                .then(data => {
+                    let provinceSelect = document.getElementById("province");
+                    data.forEach(province => {
+                        let option = document.createElement("option");
+                        option.value = province.code;
+                        option.text = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+                });
+        }
+
+        function loadDistricts() {
+            let provinceId = document.getElementById("province").value;
+            fetch(`https://provinces.open-api.vn/api/p/${provinceId}?depth=2`)
+                .then(response => response.json())
+                .then(data => {
+                    let districtSelect = document.getElementById("district");
+                    districtSelect.innerHTML = "<option value=''>Chọn quận/huyện</option>";
+                    data.districts.forEach(district => {
+                        let option = document.createElement("option");
+                        option.value = district.code;
+                        option.text = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    updateFullAddress();
+                });
+        }
+
+        function loadWards() {
+            let districtId = document.getElementById("district").value;
+            fetch(`https://provinces.open-api.vn/api/d/${districtId}?depth=2`)
+                .then(response => response.json())
+                .then(data => {
+                    let wardSelect = document.getElementById("ward");
+                    wardSelect.innerHTML = "<option value=''>Chọn xã/phường</option>";
+                    data.wards.forEach(ward => {
+                        let option = document.createElement("option");
+                        option.value = ward.name;
+                        option.text = ward.name;
+                        wardSelect.appendChild(option);
+                    });
+                    updateFullAddress();
+                });
+        }
+
+
+        //VN PAY
+        document.addEventListener("DOMContentLoaded", function () {
+            loadProvincesVnpay();
+            document.getElementById("address_detail_vnpay").addEventListener("input", updateFullAddressVnpay);
+        });
+
+        // Cập nhật địa chỉ đầy đủ
+        function updateFullAddressVnpay() {
+            let province = document.getElementById("province-vnpay").options[document.getElementById("province-vnpay").selectedIndex]?.text || "";
+            let district = document.getElementById("district-vnpay").options[document.getElementById("district-vnpay").selectedIndex]?.text || "";
+            let ward = document.getElementById("ward-vnpay").options[document.getElementById("ward-vnpay").selectedIndex]?.text || "";
+            let detail = document.getElementById("address_detail_vnpay").value;
+
+            document.getElementById("fullAddress-vnpay").value = `${detail}, ${ward}, ${district}, ${province}`;
+        }
+
+        // Load tỉnh/thành phố
+        function loadProvincesVnpay() {
+            fetch("https://provinces.open-api.vn/api/p/")
+                .then(response => response.json())
+                .then(data => {
+                    let provinceSelect = document.getElementById("province-vnpay");
+                    provinceSelect.innerHTML = "<option value=''>Chọn tỉnh/thành phố</option>"; // Reset danh sách
+                    data.forEach(province => {
+                        let option = document.createElement("option");
+                        option.value = province.code;
+                        option.text = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Lỗi khi tải danh sách tỉnh:", error));
+        }
+
+        // Load quận/huyện khi chọn tỉnh
+        function loadDistrictsVnpay() {
+            let provinceId = document.getElementById("province-vnpay").value;
+            let districtSelect = document.getElementById("district-vnpay");
+            districtSelect.innerHTML = "<option value=''>Chọn quận/huyện</option>"; // Reset danh sách
+
+            if (!provinceId) return; // Nếu chưa chọn tỉnh, không thực hiện tiếp
+
+            fetch(`https://provinces.open-api.vn/api/p/${provinceId}?depth=2`)
+                .then(response => response.json())
+                .then(data => {
+                    data.districts.forEach(district => {
+                        let option = document.createElement("option");
+                        option.value = district.code;
+                        option.text = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    updateFullAddressVnpay();
+                })
+                .catch(error => console.error("Lỗi khi tải danh sách quận/huyện:", error));
+        }
+
+        // Load xã/phường khi chọn quận/huyện
+        function loadWardsVnpay() {
+            let districtId = document.getElementById("district-vnpay").value;
+            let wardSelect = document.getElementById("ward-vnpay");
+            wardSelect.innerHTML = "<option value=''>Chọn xã/phường</option>"; // Reset danh sách
+
+            if (!districtId) return; // Nếu chưa chọn quận/huyện, không thực hiện tiếp
+
+            fetch(`https://provinces.open-api.vn/api/d/${districtId}?depth=2`)
+                .then(response => response.json())
+                .then(data => {
+                    data.wards.forEach(ward => {
+                        let option = document.createElement("option");
+                        option.value = ward.name;
+                        option.text = ward.name;
+                        wardSelect.appendChild(option);
+                    });
+                    updateFullAddressVnpay();
+                })
+                .catch(error => console.error("Lỗi khi tải danh sách xã/phường:", error));
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let paymentMethodSelect = document.getElementById("payment-method");
+            let formThongTin = document.getElementById("form-thong-tin");
+            let formVnpay = document.getElementById("form-vnpay");
+            let codButton = document.getElementById("cod-button");
+            let paypalButton = document.getElementById("paypal-button");
+
+            paymentMethodSelect.addEventListener("change", function () {
+                let selectedMethod = this.value;
+
+                // Ẩn tất cả form trước
+                formThongTin.classList.add("hidden");
+                formVnpay.classList.add("hidden");
+                codButton.classList.add("hidden");
+                paypalButton.classList.add("hidden");
+
+                // Hiển thị form phù hợp
+                if (selectedMethod === "cod") {
+                    formThongTin.classList.remove("hidden");
+                    codButton.classList.remove("hidden");
+                } else if (selectedMethod === "paypal") {
+                    formThongTin.classList.remove("hidden");
+                    paypalButton.classList.remove("hidden");
+                } else if (selectedMethod === "vnpay") {
+                    formVnpay.classList.remove("hidden");
+                }
+            });
+        });
+
+    </script>
+
+
+</body>

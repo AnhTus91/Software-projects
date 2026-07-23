@@ -1,0 +1,105 @@
+﻿@model IEnumerable<QLThuocDAPM.Data.PhanHoiBaoCao>
+
+@{
+    ViewData["Title"] = "FeedbackHistory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="text-align: center; font-size: 24px; color: #333; margin-top: 20px;">Lịch Sử Phản Hồi</h2>
+<div class="feedback-table-container">
+    <table class="feedback-table">
+        <thead>
+            <tr>
+                <th>Ngày</th>
+                <th>Nội Dung</th>
+                <th>Người Phản Hồi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.NgayPhanHoi</td>
+                    <td>@item.NoiDung</td>
+                    <td>@(item.NguoiTraLoi ? "Admin" : "Bạn")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Container bao quanh bảng để căn giữa */
+    .feedback-table-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        padding: 0 15px;
+    }
+
+    /* Thiết kế bảng lịch sử phản hồi */
+    .feedback-table {
+        width: 100%;
+        max-width: 800px;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Kiểu cho tiêu đề bảng */
+        .feedback-table thead {
+            background-color: #007BFF;
+            color: white;
+            text-align: left;
+        }
+
+        .feedback-table th,
+        .feedback-table td {
+            padding: 12px 15px;
+        }
+
+        /* Kiểu cho các ô dữ liệu */
+        .feedback-table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+            /* Kiểu nền xen kẽ các hàng trong bảng */
+            .feedback-table tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            /* Hiệu ứng khi di chuột qua hàng */
+            .feedback-table tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+
+        /* Căn chỉnh văn bản */
+        .feedback-table th {
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .feedback-table td {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+            /* Kiểu cho cột Ngày */
+            .feedback-table td:first-child {
+                font-weight: bold;
+                color: #007BFF;
+            }
+
+            /* Kiểu cho cột Người Phản Hồi */
+            .feedback-table td:last-child {
+                color: #007BFF;
+                font-weight: 500;
+            }
+
+</style>

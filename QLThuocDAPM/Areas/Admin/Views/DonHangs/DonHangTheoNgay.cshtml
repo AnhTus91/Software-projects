@@ -1,0 +1,41 @@
+﻿@model IEnumerable<QLThuocDAPM.Data.DonHang>
+@{
+    ViewData["Title"] = "Danh Sách Đơn Hàng Theo Ngày";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning">
+        @ViewBag.Message
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>        
+                <th>Mã Đơn Hàng</th>
+                <th>Username</th>
+                <th>Địa Chỉ</th>
+                <th>Tổng Tiền</th>
+                <th>Ngày Tạo</th>
+                <th>Trạng Thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var donHang in Model)
+            {
+                <tr>
+                    <td>@donHang.MaDh</td>
+                    <td>@donHang.Username</td>
+                    <td>@donHang.Diachi</td>
+                    <td>@string.Format("{0:n0}", donHang.TongTien) VNĐ</td>
+                    <td>@donHang.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                    <td>@donHang.TrangThai</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

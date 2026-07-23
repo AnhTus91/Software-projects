@@ -1,0 +1,44 @@
+﻿@model IEnumerable<QLThuocDAPM.Data.Benh>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayName("Tên bệnh")</th>
+            <th>@Html.DisplayName("Mô tả 1")</th>
+            <th>@Html.DisplayName("Mô tả 2")</th>
+            <th></th>
+        </tr>
+
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TenBenh)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MoTa1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MoTa2)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MaBenh">📝 Chỉnh sửa</a> |
+                    <a asp-action="Details" asp-route-id="@item.MaBenh">🔍 Xem chi tiết</a> |
+                    <a asp-action="Delete" asp-route-id="@item.MaBenh" style="color: red;">❌ Xóa</a>
+                </td>
+            </tr>
+
+}
+    </tbody>
+</table>
